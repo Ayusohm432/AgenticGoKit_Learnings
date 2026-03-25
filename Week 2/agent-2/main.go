@@ -14,9 +14,7 @@ import (
 )
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-
+	ctx := context.Background()
 	// Get service version from environment or use default
 	serviceVersion := os.Getenv("SERVICE_VERSION")
 	if serviceVersion == "" {
@@ -37,19 +35,32 @@ func main() {
 
 	// Take User input at runtime
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter Your Message: ")
-	userMessage, _ := reader.ReadString('\n')
-	userMessage = strings.TrimSpace(userMessage)
+	fmt.Println("\n💬 Chat started (type 'exit' to quit)\n")
 
-	fmt.Println("Assistant:")
+	for{
+		reqCtx, cancel := context.WithTimeout(ctx, 60*time.Second)
+		fmt.Print("\n\nYou: ")
+		userMessage, _ := reader.ReadString('\n')
+		userMessage = strings.TrimSpace(userMessage)
+		
+		if userMessage == "exit"{
+			fmt.Println("👋 Goodbye!")
+			cancel()
+			break
+		}
+		fmt.Println("\nAssistant: ")
 
-	// Use streaming for real-time response
-	stream, err := agent.RunStream(ctx, userMessage)
-	if err != nil {
-		log.Fatalf("Failed to start streaming: %v", err)
+		stream, err := agent.RunStream(reqCtx, userMessage)
+		if err != nil {
+			log.Printf("Failed to start streaming: %v", err)
+			cancel()
+			continue
+		}
+
+		printStreamingResponse(stream)
+		fmt.Println()
+		cancel()
 	}
-
-	printStreamingResponse(stream)
 }
 
 // printStreamingResponse prints the streaming response as tokens arrive
