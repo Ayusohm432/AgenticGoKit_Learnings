@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"time"
+	"bufio"
+	"strings"
 
 	agk "github.com/agenticgokit/agenticgokit/v1beta"
 	_ "github.com/agenticgokit/agenticgokit/plugins/llm/openai"
@@ -33,10 +35,12 @@ func main() {
 	}
 	defer agent.Cleanup(ctx)
 
-	// Simple conversation
-	userMessage := "Write a haiku about coding."
+	// Take User input at runtime
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter Your Message: ")
+	userMessage, _ := reader.ReadString('\n')
+	userMessage = strings.TrimSpace(userMessage)
 
-	fmt.Printf("User: %s\n\n", userMessage)
 	fmt.Println("Assistant:")
 
 	// Use streaming for real-time response
