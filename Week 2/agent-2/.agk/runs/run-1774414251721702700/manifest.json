@@ -1,0 +1,12 @@
+{
+  "run_id": "run-1774414251721702700",
+  "command": "agent-2",
+  "status": "completed",
+  "start_time": "2026-03-25T10:20:51.7236005+05:30",
+  "end_time": "2026-03-25T10:20:57.298129+05:30",
+  "duration_seconds": 5.5745284999999996,
+  "span_count": 2,
+  "llm_calls": 1,
+  "total_tokens": 0,
+  "estimated_cost": 0
+}
